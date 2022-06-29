@@ -36,11 +36,17 @@ Once the map is generated, we can proceed to the navigation of multiple robots. 
 
 	    roslaunch multirobot_tb main.launch
 
+The following Gazebo window opens:
+
+![Gzb](https://github.com/saiv20/multirobot_tb/blob/main/imgs/S1.png)
+
 2. Now we launch the rviz, move_base, and amcl nodes 
 
 	    roslaunch multirobot_tb navigation.launch
+	
+![RViz](https://github.com/saiv20/multirobot_tb/blob/main/imgs/S2.png)
             
-3. In RViz, set the 2D Pose estimate topic to `/robot1/initialpose`. Once the topics are assigned, set the initial pose estimate of the robot by clicking on **2D Pose Estimate**. Similarly for the second robot, set the 2D Pose estimate topic to `/robot2/initialpose`. Follow the steps and assign the initial pose estimate of all robots by replacing robot1 with the name of the robot.
+3. In RViz, set the 2D Pose estimate topic (under tool properties in the image shown above) to `/robot1/initialpose`. Once the topics are assigned, set the initial pose estimate of the robot by clicking on **2D Pose Estimate**. Similarly for the second robot, set the 2D Pose estimate topic to `/robot2/initialpose`. Follow the steps and assign the initial pose estimate of all robots by replacing robot1 with the name of the robot.
 
 4. Set the 2D Nav Goal Topic to `/robot1/move_base_simple/goal` and click on **2D Nav Goal** and set the goal location and pose to move robot1. To move robot2, follow the same step by replacing robot1 with robot2 in 2D Nav Goal Topic. Repeat the steps for other robots by replacing robot1 with the name of the robot. This will move the corresponding robot to its goal location and pose.
   
