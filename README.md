@@ -8,7 +8,7 @@ This ROS package implements navigation for multiple robots autonomously. Initial
 
 Build from source, clone from this repository into your catkin workspace and compile the package using:
   
-    git clone <>
+    git clone https://github.com/saiv20/multirobot_tb.git
     cd ..
     catkin_make
 
