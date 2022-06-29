@@ -1,0 +1,92 @@
+<launch>
+    
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find multirobot_tb)/urdf/robotdiff.urdf.xacro"/>
+  
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher2"></node>
+
+  <arg name="scan_topic"     default="/robot2/scan"/>
+  <arg name="odom_frame_id"   default="robot2_tf/odom"/>
+  <arg name="base_frame_id"   default="robot2_tf/base_footprint"/>
+  <arg name="global_frame_id" default="map"/>
+
+  
+  
+  <!-- AMCL parameters-->
+<node pkg="amcl" type="amcl" name="amcl2" output="screen">
+
+  <param name="min_particles"             value="500"/>
+  <param name="max_particles"             value="3000"/>
+  <param name="kld_err"                   value="0.02"/>
+  <param name="update_min_d"              value="0.20"/>
+  <param name="update_min_a"              value="0.20"/>
+  <param name="resample_interval"         value="1"/>
+  <param name="transform_tolerance"       value="0.5"/>
+  <param name="recovery_alpha_slow"       value="0.00"/>
+  <param name="recovery_alpha_fast"       value="0.00"/>
+  <param name="gui_publish_rate"          value="50.0"/>
+
+  <remap from="scan"                      to="$(arg scan_topic)"/>
+  <remap from="initialpose"               to="/robot2/initialpose"/>
+  <remap from="amcl_pose"                 to="/robot2/amcl_pose"/>
+  <remap from="particlecloud"             to="/robot2/particlecloud"/>
+  <param name="laser_max_range"           value="3.5"/>
+  <param name="laser_max_beams"           value="180"/>
+  <param name="laser_z_hit"               value="0.5"/>
+  <param name="laser_z_short"             value="0.05"/>
+  <param name="laser_z_max"               value="0.05"/>
+  <param name="laser_z_rand"              value="0.5"/>
+  <param name="laser_sigma_hit"           value="0.2"/>
+  <param name="laser_lambda_short"        value="0.1"/>
+  <param name="laser_likelihood_max_dist" value="2.0"/>
+  <param name="laser_model_type"          value="likelihood_field"/>
+
+  <param name="odom_model_type"           value="diff"/>
+  <param name="odom_alpha1"               value="0.1"/>
+  <param name="odom_alpha2"               value="0.1"/>
+  <param name="odom_alpha3"               value="0.1"/>
+  <param name="odom_alpha4"               value="0.1"/>
+  <param name="odom_frame_id"             value="$(arg odom_frame_id)"/>
+  <param name="base_frame_id"             value="$(arg base_frame_id)"/>
+  <param name="global_frame_id"           value="$(arg global_frame_id)"/>
+
+</node>
+  
+  <!-- Arguments -->
+  <arg name="cmd_vel_topic" default="/robot2/cmd_vel" />
+  <arg name="odom_topic" default="/robot2/odom" />
+  <arg name="move_forward_only" default="false"/>
+
+  <!-- move_base -->
+  <node pkg="move_base" type="move_base" respawn="false" name="move_base2" output="screen">
+    <param name="base_local_planner" value="dwa_local_planner/DWAPlannerROS" />
+    <rosparam file="$(find multirobot_tb)/params/costmap_common_params.yaml" command="load" ns="global_costmap" />
+    <rosparam file="$(find multirobot_tb)/params/costmap_common_params.yaml" command="load" ns="local_costmap" />
+    <rosparam file="$(find multirobot_tb)/params/local_costmap_params.yaml" command="load" />
+    <rosparam file="$(find multirobot_tb)/params/global_costmap_params.yaml" command="load" />
+    <rosparam file="$(find multirobot_tb)/params/move_base_params.yaml" command="load" />
+    <rosparam file="$(find multirobot_tb)/params/dwa_local_planner_params.yaml" command="load" />
+
+    <!-- reset frame_id parameters using user input data -->
+    <param name="global_costmap/global_frame" value="$(arg global_frame_id)"/>
+    <param name="global_costmap/robot_base_frame" value="$(arg base_frame_id)"/>
+    <param name="local_costmap/global_frame" value="$(arg odom_frame_id)"/>
+    <param name="local_costmap/robot_base_frame" value="$(arg base_frame_id)"/>
+    <param name="DWAPlannerROS/global_frame_id" value="$(arg odom_frame_id)"/>
+
+    <remap from="cmd_vel" to="$(arg cmd_vel_topic)"/>
+    <remap from="odom" to="$(arg odom_topic)"/>
+    <remap from="scan" to="$(arg scan_topic)"/>
+    <remap from="map" to="/map" />
+
+    <remap from="/move_base/cancel"                                                to="/robot2/move_base/cancel" />
+    <remap from="/move_base/feedback"                                              to="/robot2/move_base/feedback" />
+    <remap from="/move_base/goal"                                                  to="/robot2/move_base/goal" />
+    <remap from="/move_base/result"                                                to="/robot2/move_base/result" />
+    <remap from="/move_base/status"                                                to="/robot2/move_base/status" />
+    <remap from="/move_base_simple/goal"                                           to="/robot2/move_base_simple/goal" />
+
+    <param name="DWAPlannerROS/min_vel_x" value="0.0" if="$(arg move_forward_only)" />
+  </node>
+
+
+</launch>

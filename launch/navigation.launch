@@ -1,0 +1,21 @@
+<launch>
+    <param name="/use_sim_time" value="true"/>
+  
+    <!-- Run the map server -->
+    <node name="map_server" pkg="map_server" type="map_server" args="$(find multirobot_tb)/maps/map_one.yaml" >
+ 
+    </node>
+
+        
+  <!-- MOVE_BASE-->
+
+      <include file="$(find multirobot_tb)/launch/amcl_move1.launch" />
+      <include file="$(find multirobot_tb)/launch/amcl_move2.launch" />
+      <include file="$(find multirobot_tb)/launch/amcl_move3.launch" />
+  <!-- Launching Rviz      -->
+  
+  <!-- rviz -->
+  <node pkg="rviz" type="rviz" name="rviz" required="true"
+    args="-d $(find multirobot_tb)/rviz/rviz1.rviz"/>
+  
+</launch>

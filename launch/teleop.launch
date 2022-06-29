@@ -1,0 +1,4 @@
+<launch>   
+    <!-- Start teleop node -->
+    <node pkg="multirobot_tb" type="teleop.py" name="teleop" output="screen"/>
+   </launch>

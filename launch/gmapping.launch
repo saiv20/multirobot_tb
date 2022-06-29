@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launch>
+  
+  <node name="gazebo" pkg="gazebo_ros" type="gazebo"
+  args="$(find multirobot_tb)/worlds/world1.world" respawn="false" output="screen" />
+
+  <arg name="set_base_frame" default="base_footprint"/>
+  <arg name="set_odom_frame" default="odom"/>
+  <arg name="set_map_frame"  default="map"/>
+
+  <param name="use_sim_time" value="true"/>
+
+  
+  <param name="robot_description" command="$(find xacro)/xacro --inorder $(find multirobot_tb)/urdf/robotdiff.urdf.xacro"/>
+
+  <include file="$(find multirobot_tb)/launch/single_robot.launch" >
+    <arg name="init_pose" value="-x -4 -y 1 -z 0" />
+    <arg name="robot_name"  value="GMappingRobot" />
+  </include>
+  
+  <!--Launch rviz-->
+  <node pkg="rviz" type="rviz" name="rviz2"   args="-d $(find multirobot_tb)/rviz/rviz2.rviz"></node>
+
+  <!--Launch slam_gmapping node-->
+  <node pkg="gmapping" name="slam_gmapping" type="slam_gmapping" output="screen">
+    <param name="base_frame" value="$(arg set_base_frame)"/>
+    <param name="odom_frame" value="$(arg set_odom_frame)"/>
+    <param name="map_frame"  value="$(arg set_map_frame)"/>
+    <rosparam command="load" file="$(find multirobot_tb)/params/gmapping_params.yaml" />
+
+  </node>
+
+</launch>
